@@ -8,20 +8,22 @@ public class Automaton {
 	private Element[] elements;
 	private String[] input;
 	private boolean output;
+	private Scanner in;
 	
+	// OK
 	public Automaton()
 	{}
-	
+
+	// OK
 	private void setElements()
 	{
 		int i;
 		String aux;
 		String[] aux2;
-		Scanner input = new Scanner(System.in);
 		
 		// Creating the Array of Elements and filling it.
 		System.out.print("Σ : ");
-		aux = input.nextLine();
+		aux = in.nextLine();
 		aux2 = aux.split(" ");
 		
 		this.elements = new Element[aux2.length];
@@ -29,199 +31,169 @@ public class Automaton {
 		for(i = 0; i < aux2.length; i++)
 			this.elements[i] = new Element(aux2[i]);
 		
-		input.close();
 	}
 	
+	// OK
 	private void setStates()
 	{
-		int i;
-		int lenght;
-		Scanner input = new Scanner(System.in);
-		
+		int i, lenght;
+		String str;
 		// Creating the Array of States and filling it.
 		System.out.print("Q : ");
-		lenght = input.nextInt();
-		input.nextLine();
+		str = in.nextLine();
+		lenght = Integer.parseInt(str);
 		
 		this.states = new State[lenght];
 		
 		for(i = 0; i < lenght; i++)
 			this.states[i] = new State();
-		
-		input.close();
 	}
 
+	// OK
 	private void setDelta() throws AutomatonException
 	{
 		String aux;
 		String[] aux2;
 		int i, j, element, previousState, nextState;
 		
-		Scanner input = new Scanner(System.in);
-		
 		// Creating the Deltas Transition Table and filling it.
 		System.out.print("δ : ");
-		aux = input.nextLine();
+		aux = in.nextLine();
 		aux2 = aux.split(" ");
+		this.delta = new State[this.states.length][this.elements.length];
 		
 		// After split the string and get different strings, we can organize our Delta Transition Table
 		for (i = 0; i < aux2.length; i++)
 		{
-			previousState = aux2[i].charAt(0) - '0';
-			// find which element have aux2[i].charAt(0) like its symbol
+			previousState = aux2[i].charAt(0) - '0' - 1;
+			nextState = aux2[i].charAt(2) - '0' - 1;
+			
+			if (previousState < 0 || previousState >= this.states.length ||
+				nextState < 0 || nextState >= this.states.length)
+				throw new AutomatonException("Invalid State in δ. (" + previousState + ")");
+			
+			// find which element have aux2[i].charAt(1) like its symbol
 			for (j = 0; j < this.elements.length; j++)
 			{
 				// Converting the character at 'i' index to a string to compare with the element symbol
 				// if they are equals, so I found it and we can break the loop.
-				if (this.elements[j].getSymbol() == Character.toString(aux2[i].charAt(1)))
+				if (this.elements[j].getSymbol().equals(Character.toString(aux2[i].charAt(1))))
 					break;
 			}
 			// if the next if statement is true, the previous loop didn't find any element with that symbol.
 			// So we should abort the process.
 			if(j == this.elements.length)
-				throw new AutomatonException("Invalid Element Symbol.");
+				throw new AutomatonException("Invalid Element Symbol in δ. (" + Character.toString(aux2[i].charAt(1)) + ")" );
 			
 			// if not, element will took that element value
 			element = this.elements[j].getValue();
 			
-			// find which state have aux2[i].charAt(0) like its value
-			nextState = aux2[i].charAt(2) - '0';
-			
-			if(nextState >= this.states.length)
-				throw new AutomatonException("Invalid Next State in δ.");
-			
 			delta[previousState][element] = this.states[nextState];
 		}
-		
-		input.close();
 	}
 	
+	// OK
 	private void setInitialState() throws AutomatonException
 	{
-
-		int i;
+		int n;
 		String aux;
 		String[] aux2;
-		Scanner input = new Scanner(System.in);
 		
 		// Setting up Initial State.
 		System.out.print("i : ");
-		aux = input.nextLine();
+		aux = in.nextLine();
 		aux2 = aux.split(" ");
 		
 		if(aux2.length > 1)
 			throw new AutomatonException("Too many Initial States!");
 		
-		for (i = 0; i < this.states.length; i++)
-		{
-			if ((aux2[0].charAt(0) - '0') == this.states[i].getValue())
-			{
-				this.states[i].setType('i');
-				break;
-			}
-		}
+		n = Integer.parseInt(aux2[0]) -1; // Transform String in int type
 		
-		if(i == this.states.length)
-			throw new AutomatonException("Invalid Initial State!");
+		if (n >= this.states.length)
+			throw new AutomatonException("Invalid Initial State! Its over then state array lenght.");
 		
-		this.initialState = this.states[i];
-		
-		input.close();
+		this.states[n].setType('i');
+		this.initialState = this.states[n];
 	}
 	
+	// OK
 	private void setFinalStates()
 	{
-		int i;
+		int i, n;
 		String aux;
 		String[] aux2;
-		Scanner input = new Scanner(System.in);
 
 		// Setting up Final States
 		System.out.print("F : ");
-		aux = input.nextLine();
+		aux = in.nextLine();
 		aux2 = aux.split(" ");
+		
+		this.finalStates = new State[aux2.length];
 		
 		for (i = 0; i < aux2.length; i++)
 		{
-			if ((aux2[0].charAt(0) - '0') == this.states[i].getValue())
-			{
-				this.states[i].setType('f');
-			}
+			n = Integer.parseInt(aux2[i]) - 1;
+			this.states[n].setType('f');
+			this.finalStates[i] = this.states[n];
 		}
-		
-		input.close();
 	}
 	
+	// OK
 	public void setProperties() throws AutomatonException
 	{
 		System.out.println("All inputs for each line should be separated with a space.");
-		
+
+		this.in = new Scanner(System.in);
 		setElements();
 		setStates();
 		setDelta();
 		setInitialState();
 		setFinalStates();
-		
-	}
-	
-	public void setProperties2()
-	{
-		this.elements[0] = new Element("0");
-		this.elements[1] = new Element("1");
-		
-		this.states[0] = new State();
-		this.states[1] = new State();
-		this.states[2] = new State();
-		
-		this.delta[0] = "101";
-		this.delta[1] = "112";
-		this.delta[2] = "203";
-		this.delta[3] = "212";
-		this.delta[4] = "302";
-		this.delta[5] = "312";
-		
-		this.initialState = this.states[1];
-		
-		this.finalStates[0] = this.states[1];
-		this.finalStates[1] = this.states[2];
-		
-		this.output = true;
 	}
 
-	public void input() throws AutomatonException
+	// MUST ADJUST SOMETHING
+	public void checkInput() throws AutomatonException
 	{
 		String aux;
 		int i, j;
-		boolean ok;
+		State actualState;
 		
-		Scanner in = new Scanner(System.in);
+		System.out.print("Input: ");
 		aux = in.nextLine();
-		in.close();
 		
 		this.input = aux.split("");
 		
+		actualState = this.initialState;
+		
 		for(i = 0; i < this.input.length; i++)
 		{
-			ok = false;
 			for(j = 0; j < this.elements.length; j++)
 			{
-				if (this.input[i] == this.elements[j])
-					ok = true; // part of the alphabet
+				if (this.input[i] == this.elements[j].getSymbol())
+					break;
 			}
-			if(!ok)
-			{
-				throw new AutomatonException("Invalid input. " + this.input[i] + "not part of the alphabet");
-			}
+			
+			if(j == this.elements.length)
+				throw new AutomatonException("Invalid input. " + this.input[i] + " not part of the alphabet");
+			
+			actualState = delta[actualState.getValue()][this.elements[j].getValue()];
+			
+			if(actualState == null)
+				throw new AutomatonException("This state is invalid! " + this.input[i] + " doesn't exist!");
 		}
-		
-	}
 
-	public void calculate()
-	{
+		for (i = 0; i < this.finalStates.length; i++)
+		{
+			if (actualState == this.finalStates[i])
+				this.output = true;
+		}
+		this.in.close();
 		
-		
+		if(!this.output)
+			throw new AutomatonException("Invalid Final Stage at end of process!");
 	}
 	
+	// OK
 	public boolean isValid()
 	{
 		return this.output;

@@ -3,13 +3,17 @@ public class Main {
 
 	public static void main(String[] args) {
 		
+		
+		
+		
+		
+		
+		
 		Automaton a1 = new Automaton();
 		
-		a1.setProperties2();
-		
 		try {
-			a1.input();
-			a1.calculate();
+			a1.setProperties();
+			a1.checkInput();
 		} catch (AutomatonException e) {
 			e.printErrorMessage();
 			//e.printStackTrace();
@@ -17,6 +21,8 @@ public class Main {
 		
 		a1.isValid();
 		
+		
+		// 101 112 203 212 302 312
 	}
 
 }
