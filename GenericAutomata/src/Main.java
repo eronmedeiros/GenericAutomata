@@ -3,26 +3,19 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		
-		
-		
-		
-		
-		
-		Automaton a1 = new Automaton();
+		Automata a1 = new Automata();
 		
 		try {
 			a1.setProperties();
 			a1.checkInput();
-		} catch (AutomatonException e) {
+		} catch (AutomataException e) {
 			e.printErrorMessage();
 			//e.printStackTrace();
 		}
+
+		System.out.println(a1.isValid());
 		
-		a1.isValid();
-		
-		
-		// 101 112 203 212 302 312
+		// teste: 101 112 203 212 302 312
 	}
 
 }
