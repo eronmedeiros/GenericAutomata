@@ -14,8 +14,12 @@ public class Main {
 		}
 
 		System.out.println(a1.isValid());
-		
-		// teste: 101 112 203 212 302 312
+		/*
+		 *  Testes
+		 *  101 112 203 212 302 312  >> 
+		 *  101 112 203 211 302 313  >>
+		 *  
+		 */
 	}
 
 }

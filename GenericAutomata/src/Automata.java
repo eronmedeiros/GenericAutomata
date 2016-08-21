@@ -151,7 +151,7 @@ public class Automata {
 		setFinalStates();
 	}
 
-	// MUST ADJUST SOMETHING
+	// OK
 	public void checkInput() throws AutomataException
 	{
 		String aux;
@@ -160,6 +160,7 @@ public class Automata {
 		
 		System.out.print("Input: ");
 		aux = in.nextLine();
+		this.in.close();
 		
 		this.input = aux.split("");
 		
@@ -169,7 +170,7 @@ public class Automata {
 		{
 			for(j = 0; j < this.elements.length; j++)
 			{
-				if (this.input[i] == this.elements[j].getSymbol())
+				if (this.input[i].equals(this.elements[j].getSymbol()))
 					break;
 			}
 			
@@ -179,15 +180,11 @@ public class Automata {
 			actualState = delta[actualState.getValue()][this.elements[j].getValue()];
 			
 			if(actualState == null)
-				throw new AutomataException("This state is invalid! " + this.input[i] + " doesn't exist!");
+				throw new AutomataException("This state is invalid! Actual state is a Rejection State!");
 		}
-
-		for (i = 0; i < this.finalStates.length; i++)
-		{
-			if (actualState == this.finalStates[i])
+		
+		if(actualState.getType() == 'f')
 				this.output = true;
-		}
-		this.in.close();
 		
 		if(!this.output)
 			throw new AutomataException("Invalid Final Stage at end of process!");
