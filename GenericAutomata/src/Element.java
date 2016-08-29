@@ -21,5 +21,4 @@ public class Element {
 	{
 		return this.value;
 	}
-	
 }
