@@ -133,6 +133,8 @@ public class Automata {
 		for (i = 0; i < aux2.length; i++)
 		{
 			n = Integer.parseInt(aux2[i]) - 1;
+			if(this.states[n].getType() == 'i')
+				this.states[n].setType('d');
 			this.states[n].setType('f');
 			this.finalStates[i] = this.states[n];
 		}
@@ -183,7 +185,7 @@ public class Automata {
 				throw new AutomataException("This state is invalid! Actual state is a Rejection State!");
 		}
 		
-		if(actualState.getType() == 'f')
+		if(actualState.getType() == 'f' || actualState.getType() == 'd')
 				this.output = true;
 		
 		if(!this.output)
